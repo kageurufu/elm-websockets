@@ -1,0 +1,17 @@
+{
+  "scripts": {
+    "build": "tsc --lib dom,es2015 --outDir dist lib/Websockets/ports.websocket.ts"
+  },
+  "dependencies": {
+    "elm": "^0.19.1-6",
+    "elm-format": "^0.8.7",
+    "elm-live": "^4.0.2"
+  },
+  "devDependencies": {
+    "@types/elm": "^0.19.3",
+    "elm-review": "^2.10.3",
+    "tsx": "^4.7.1",
+    "typescript": "*",
+    "ws": "^8.16.0"
+  }
+}

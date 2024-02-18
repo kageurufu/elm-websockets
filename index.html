@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Main</title>
+    <!-- <link rel="stylesheet" href="whatever-you-want.css"> -->
+    <script src="elm-web.js"></script>
+    <script src="dist/ports.websocket.js"></script>
+  </head>
+  <body>
+    <script>
+      var app = Elm.Main.init();
+      initSockets(app);
+    </script>
+  </body>
+</html>
