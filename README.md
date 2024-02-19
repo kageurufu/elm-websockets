@@ -1,4 +1,4 @@
-# frank/websockets
+# kageurufu/websockets
 
 A fairly ergonomic elm websockets implementation.
 
