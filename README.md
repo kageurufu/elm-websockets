@@ -1,11 +1,89 @@
-elm-websockets
-==============
+# frank/websockets
+
+A fairly ergonomic elm websockets implementation.
+
+See `example/` for a simple Websocket chat demo
 
 
-Due to ports being banned from packages.elm-lang, I've published this as bare code.
+### Getting started
 
-Extending Websockets.elm to accept your own ports wouldn't be too hard (`onEvent : mySubPort -> EventHandlers msg -> Sub msg`, `send myCmdPort ...`, etc)
+Reference `ports.websocket.js` in your html (For deployment, you copy this somewhere into your application).
 
-For now, copy lib/ and dist/ports.websocket.ts to your project, add 'lib/Websockets' to your elm.json if you don't already use a split layout (or just everying in `lib/Websockets` into your `src/`), and reference `index.html` for how to enable the javascript side ports.
+```html
+<script src="//raw.githubusercontent.com/kageurufu/elm-websockets/master/dist/ports.websocket.js"></script>
+<script>
+  var app = Elm.Main.init();
+  initWebsockets(app);
+</script>
+```
 
-Set up your subscriptions where
+Define the two necessary ports
+
+```elm
+-- src/Ports.elm
+port module Ports exposing (socket)
+
+import Websockets
+
+
+port webSocketCommand : Websockets.CommandPort msg
+
+
+port webSocketEvent : Websockets.EventPort msg
+```
+
+Then get your Command and Event methods
+
+```elm
+socket : Websockets.Methods msg
+socket =
+    Websockets.withPorts
+        { command = webSocketCommand
+        , event = webSocketEvent
+        }
+```
+
+Define your messages and subscriptions
+
+```elm
+type Msg
+    = -- ...
+    | SocketOpened Websockets.WebsocketOpened
+    | SocketMessage Websockets.WebsocketMessage
+    | SocketClosed Websockets.WebsocketClosed
+    | SocketError Websockets.WebsocketError
+    | NoOp
+
+subscriptions model =
+    socket.onEvent
+        { onOpened = SocketOpened
+        , onClosed = SocketClosed
+        , onError = SocketError
+        , onMessage = SocketMessage
+        , onDecodeError = always NoOp
+        }
+```
+
+And start using Websockets!
+
+```elm
+
+encodeMessage = Encode.string
+decodeMessage = Decode.decodeString Decode.String
+
+init flags =
+    ({ messages : List String }
+    , socket.open "chat" "wss://my-socket-url/ws" [("metadata","chat")])
+
+update msg model =
+    case msg of
+        SocketOpened { name } ->
+            (model, socket.send name (encodeMessage "I opened a socket!"))
+        SocketMessage { name, data } ->
+            case decodeMessage of
+                Ok message ->
+                    ( { model | messages = model.messages ++ [message] }
+                    , Cmd.none
+                    )
+        -- ...
+```

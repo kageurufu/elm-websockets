@@ -1,10 +1,18 @@
-module Websockets.Command exposing (Command(..), close, open, send)
+module Websockets.Command exposing (Command(..), open, send, close)
+
+{-| Commands for interacting with Websockets
+
+@docs Command, open, send, close
+
+-}
 
 import Dict
 import Json.Encode as Encode
 import Websockets.Meta as Meta
 
 
+{-| Type for wrapping Commands before JSON encoding
+-}
 type Command
     = Open String String Meta.Meta
     | Close String
@@ -36,18 +44,24 @@ encodeCommand command =
                 ]
 
 
+{-| JSON Encode a Open command for sending through the Command Port
+-}
 open : String -> String -> List ( String, String ) -> Encode.Value
 open name url meta =
     Open name url (Dict.fromList meta)
         |> encodeCommand
 
 
+{-| JSON Encode a Close command for sending through the Command Port
+-}
 close : String -> Encode.Value
 close name =
     Close name
         |> encodeCommand
 
 
+{-| JSON Encode a Send command for sending through the Command Port
+-}
 send : String -> Encode.Value -> Encode.Value
 send name value =
     Send name value

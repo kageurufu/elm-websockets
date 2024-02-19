@@ -7,9 +7,10 @@ import Html.Attributes
 import Html.Events
 import Json.Decode as Decode
 import Json.Encode as Encode
+import Ports exposing (socket)
 import Task
 import Time
-import Websockets exposing (MessageData)
+import Websockets exposing (WebsocketMessage)
 
 
 type alias Message =
@@ -45,9 +46,10 @@ type Msg
     | GotMessage String
     | SendMessage Message
     | GotTime Time.Posix
+    | GotTimeMs Int
     | SocketOpened
     | SocketClosed
-    | SocketMessage MessageData
+    | SocketMessage WebsocketMessage
     | NoOp
 
 
@@ -71,7 +73,7 @@ init _ =
       }
     , Cmd.batch
         [ Task.perform GotTime Time.now
-        , Websockets.open "chat" "ws://localhost:12345/" []
+        , socket.open "chat" "ws://localhost:12345/" []
         ]
     )
 
@@ -80,7 +82,7 @@ subscriptions : Model -> Sub Msg
 subscriptions _ =
     Sub.batch
         [ Time.every 1000 GotTime
-        , Websockets.onEvent
+        , socket.onEvent
             { onOpened = always SocketOpened
             , onClosed = always SocketClosed
             , onError = always NoOp
@@ -226,6 +228,9 @@ update msg model =
         GotTime time ->
             ( { model | time = time }, Cmd.none )
 
+        GotTimeMs ms ->
+            ( { model | time = Time.millisToPosix ms }, Cmd.none )
+
         GotMessage message ->
             ( { model | pendingMessage = message }, Cmd.none )
 
@@ -241,7 +246,7 @@ update msg model =
 
         SendMessage message ->
             ( { model | pendingMessage = "" }
-            , Websockets.send "chat" (encodeMessage message)
+            , socket.send "chat" (encodeMessage message)
             )
 
         SocketOpened ->
@@ -253,9 +258,7 @@ update msg model =
         SocketMessage { data } ->
             case decodeMessage data of
                 Ok message ->
-                    ( { model
-                        | messages = model.messages ++ [ message ]
-                      }
+                    ( { model | messages = model.messages ++ [ message ] }
                     , jumpToBottom "chat"
                     )
 

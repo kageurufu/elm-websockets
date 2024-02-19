@@ -1,3 +1,7 @@
 {
-  "compilerOptions": { "esModuleInterop": true }
+  "compilerOptions": {
+    "lib": ["dom", "es2015"],
+    "module": "None",
+    "esModuleInterop": true
+  }
 }

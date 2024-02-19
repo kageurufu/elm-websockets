@@ -35,7 +35,7 @@ type WSEvent =
       error: null | string;
     };
 
-function initSockets(app: ElmApp<WebsocketPorts>) {
+function initWebsockets(app: ElmApp<WebsocketPorts>) {
   const sockets = new Map();
 
   app.ports.webSocketCommand.subscribe((command) => {
@@ -87,7 +87,6 @@ function initSockets(app: ElmApp<WebsocketPorts>) {
         const { name, data } = command;
         const socket = sockets.get(name);
         if (socket) {
-          console.log(data)
           socket.ws.send(
             typeof data === "object" ? JSON.stringify(data) : data
           );

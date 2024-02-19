@@ -1,21 +1,29 @@
 module Websockets.Event exposing (Event(..), Name, decodeEvent)
 
+{-| Utilities for handling incoming Websocket events
+
+@docs Event, Name, decodeEvent
+
+-}
+
 import Json.Decode as Decode
 import Json.Encode as Encode
 import Websockets.Meta exposing (Meta, metaDecoder)
 
 
+{-| Websocket Names are Strings
+-}
 type alias Name =
     String
 
 
+{-| Incoming events
+-}
 type Event
     = Opened { name : Name, meta : Meta }
     | Closed { name : Name, meta : Meta, reason : String }
     | Error { name : Name, meta : Meta, error : Maybe String }
     | Message { name : Name, meta : Meta, data : String }
-
-
 
 
 decodeEventByType : String -> Decode.Decoder Event
@@ -54,6 +62,8 @@ eventDecoder =
         |> Decode.andThen decodeEventByType
 
 
+{-| Decode a JSON object from the Events port into an `Event`
+-}
 decodeEvent : Encode.Value -> Result String Event
 decodeEvent value =
     value

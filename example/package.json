@@ -1,0 +1,20 @@
+{
+  "scripts": {
+    "build": "tsc --lib dom,es2015 --outDir dist ../src/ports.websocket.ts",
+    "elm-live": "elm-live --open --debug --hot --port 12355 --start-page index.html ./src/Main.elm -- --output=elm-web.js --debug",
+    "demo-server": "tsx src/server.ts",
+    "demo": "concurrently npm:build npm:demo-server npm:elm-live"
+  },
+  "dependencies": {
+    "elm": "^0.19.1-6",
+    "elm-live": "^4.0.2"
+  },
+  "devDependencies": {
+    "@types/elm": "^0.19.3",
+    "@types/ws": "^8.5.10",
+    "concurrently": "^8.2.2",
+    "tsx": "^4.7.1",
+    "typescript": "^5.3.3",
+    "ws": "^8.16.0"
+  }
+}

@@ -42,7 +42,6 @@ function initSockets(app) {
                 var name_2 = command.name, data = command.data;
                 var socket = sockets.get(name_2);
                 if (socket) {
-                    console.log(data);
                     socket.ws.send(typeof data === "object" ? JSON.stringify(data) : data);
                 }
                 break;

@@ -2,3 +2,8 @@
 elm-stuff
 # elm-repl generated files
 repl-temp-*
+
+# Node dependencies
+node_modules/
+
+.vscode/
