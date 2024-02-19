@@ -50,7 +50,7 @@ function initSockets(app: ElmApp<WebsocketPorts>) {
         }
 
         const socket: SocketRecord = {
-          ws: new WebSocket(url, "text"),
+          ws: new WebSocket(url),
           name,
           meta,
         };
